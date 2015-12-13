@@ -1,0 +1,1 @@
+java -jar TCC_Redes_Neurais_Artificiais_Vers_o_Final.jar
