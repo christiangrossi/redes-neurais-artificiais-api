@@ -4,7 +4,7 @@ package com.anhanguera.redeneuralmlp;
  * Essa classe implementa o algorítimo Backpropagation (Algororítimo de
  * Retropropagação de erro), que corrige os pesos sinápticos da rede.
  *
- * @author Christian S
+ * @author Christian Santos
  */
 public class BackPropopagation {
 
