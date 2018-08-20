@@ -1,4 +1,8 @@
 
 com.anhanguera.exception
-com.anhanguera.redeneuralmlp
+com.anhanguera.layers
+com.anhanguera.learningalgorithms
+com.anhanguera.neuralnetworks
+com.anhanguera.neurons
 com.anhanguera.redeneuralmlp.test
+com.anhanguera.utils
