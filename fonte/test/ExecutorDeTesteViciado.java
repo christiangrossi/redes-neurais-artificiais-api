@@ -1,8 +1,9 @@
 
 
-import com.anhanguera.redeneuralmlp.CarregadorDeMatrizes;
-import com.anhanguera.redeneuralmlp.Normalizador;
-import com.anhanguera.redeneuralmlp.RedeNeuralMultilayerPerceptron;
+import com.anhanguera.neuralnetworks.MultilayerPerceptron;
+import com.anhanguera.utils.CarregadorDeMatrizes;
+import com.anhanguera.utils.Normalizador;
+
 import java.util.ArrayList;
 
 /**
@@ -23,12 +24,12 @@ public class ExecutorDeTesteViciado {
         conjuntoDeTreinamento.add(circuloForm);
         conjuntoDeTreinamento.add(trianguloForm);
 
-        RedeNeuralMultilayerPerceptron rede = new RedeNeuralMultilayerPerceptron(3, 1, 500000);
-        rede.inicializarConexoesSinapticasDaRede(circuloForm.length);
-        rede.treinar(conjuntoDeTreinamento, new double[]{1, 0});
+        MultilayerPerceptron rede = new MultilayerPerceptron(3, 1, 500000);
+        rede.inicializarConexoesSinapticas(circuloForm.length);
+        rede.aprender(conjuntoDeTreinamento, new double[]{1, 0});
 
-        rede.classificarDados(circuloForm);
-        rede.classificarDados(trianguloForm);
+        rede.classificar(circuloForm);
+        rede.classificar(trianguloForm);
         double[] circuloForm2 = normalizador.normalizarDados(leitor.carregarDados(triangulo, "f00"));
         double[] circuloForm3 = normalizador.normalizarDados(leitor.carregarDados(triangulo, "f01"));
         //rede.classificarDados(circuloForm2);

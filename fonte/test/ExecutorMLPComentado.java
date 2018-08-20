@@ -1,8 +1,9 @@
 
+import com.anhanguera.neuralnetworks.MultilayerPerceptron;
+import com.anhanguera.utils.CarregadorDeMatrizes;
+import com.anhanguera.utils.Normalizador;
 
-import com.anhanguera.redeneuralmlp.RedeNeuralMultilayerPerceptron;
-import com.anhanguera.redeneuralmlp.Normalizador;
-import com.anhanguera.redeneuralmlp.CarregadorDeMatrizes;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -13,100 +14,73 @@ import java.util.Scanner;
  */
 public class ExecutorMLPComentado {
 
-    public static Scanner s = new Scanner(System.in);
+	public static Scanner s = new Scanner(System.in);
 
-    public static void main(String[] args) throws IOException, InterruptedException, Exception {
-        System.out.println("--- Hello, i'm MutiLayer Perceptron ---\n");
-        CarregadorDeMatrizes leitor = new CarregadorDeMatrizes();
+	public static void main(String[] args) throws IOException, InterruptedException, Exception {
+		System.out.println("--- Hello, i'm MutiLayer Perceptron ---\n");
 
-        //ArrayList<double[]> circulos = leitor.LerDeDiretorios();
-        //ArrayList<double[]> triangulos = leitor.LerDeDiretorios();
-        //Carregamento direto pelo método
-        String caminhoCirculos = ""
-                + "C:\\Users\\Christian Santos\\Desktop\\conjuntoV3\\txt Final\\circulo";
-        String caminhoTriangulos = ""
-                + "C:\\Users\\Christian Santos\\Desktop\\conjuntoV3\\txt Final\\triangulo";
+		/*
+		 * Essa carrega arquivos e monta matrizes de entrada e treinamento,de teste e de
+		 * valores esperados para saídas da rede.
+		 */
+		CarregadorDeMatrizes leitor = new CarregadorDeMatrizes();
 
-        ArrayList<double[]> circulos = leitor.LerDeDiretorios(caminhoCirculos);
-        ArrayList<double[]> triangulos = leitor.LerDeDiretorios(caminhoTriangulos);
+		String caminhoCirculos = new File("./conjunto/treinamento/circ/").getCanonicalPath();
+		String caminhoTriangulos = new File("./conjunto/treinamento/trian").getCanonicalPath();
 
-        Normalizador normalizador = new Normalizador();
+		ArrayList<double[]> circulos = leitor.LerDeDiretorios(caminhoCirculos, true);
+		ArrayList<double[]> triangulos = leitor.LerDeDiretorios(caminhoTriangulos, true);
 
-        //REALIZA NORMALIZAÇÃO DOS DADOS DOS CÍRCULOS PARA QUE FIQUEM ENTRE 0 E 1
-        //System.out.println("**********Pré Normalização Circulos**********");
-        //normalizador.imprimirDados(circulos);
-        //System.out.println("**********Pós Normalização**********");
-        ArrayList<double[]> dadosCirculosNormalizados = normalizador.normalizarDados(circulos);
-        // normalizador.imprimirDados();
+		// Normalização de dados para valores entre 0 e 1
+		Normalizador normalizador = new Normalizador();
+		ArrayList<double[]> dadosCirculosNormalizados = normalizador.normalizarDados(circulos);
+		ArrayList<double[]> dadosTriangulosNormalizados = normalizador.normalizarDados(triangulos);
+		// normalizador.imprimirDados();
 
-        //REALIZA NORMALIZAÇÃO DOS DADOS DOS TRIÂNGULOS PARA QUE FIQUEM ENTRE 0 E 1
-        //System.out.println("**********Pré Normalização Triangulos**********");
-        //normalizador.imprimirDados(triangulos);
-        //System.out.println("**********Pós Normalização**********");
-        ArrayList<double[]> dadosTriangulosNormalizados = normalizador.normalizarDados(triangulos);
-        //normalizador.imprimirDados();
+		// CRIANDO INSTÂNCIA DE LISTA PARA O CONJUNTO DE TREINAMENTO
+		ArrayList<double[]> conjuntoDeTreinamento = new ArrayList<>();
 
-        // CRIANDO INSTÂNCIA DE LISTA PARA O CONJUNTO DE TREINAMENTO
-        ArrayList<double[]> conjuntoDeTreinamento = new ArrayList<>();
+		// ADICIONA CÍRCILOS À LISTA DE TREINAMETNO
+		for (double[] item : dadosCirculosNormalizados) {
+			conjuntoDeTreinamento.add(item);
+		}
+		// ADICIONA TRIÂNGULOS À LISTA DE TREINAMENTO
+		for (double[] item : dadosTriangulosNormalizados) {
+			conjuntoDeTreinamento.add(item);
+		}
 
-        //ADICIONA CÍRCILOS À LISTA DE TREINAMETNO
-        for (double[] item : dadosCirculosNormalizados) {
-            conjuntoDeTreinamento.add(item);
-        }
-        //ADICIONA TRIÂNGULOS À LISTA DE TREINAMENTO
-        for (double[] item : dadosTriangulosNormalizados) {
-            conjuntoDeTreinamento.add(item);
-        }
+		MultilayerPerceptron redeneural = new MultilayerPerceptron(18, 1, 500000);
+		redeneural.setTaxaDeAprendizado(0.01);
+	
+		System.out.println("Inicializando Conexões sinápticas...");
+		redeneural.inicializarConexoesSinapticas(conjuntoDeTreinamento.get(0).length);
 
-        RedeNeuralMultilayerPerceptron redeneural = new RedeNeuralMultilayerPerceptron(18, 1, 500000);
-        redeneural.setTaxaDeAprendizado(0.01);
-        /*
-         System.out.println("Taxa de aprendizado desejada:");
-         Scanner s = new Scanner(System.in);
-         double taxa = s.nextDouble();
-        
-         redeneural.setTaxaDeAprendizado(taxa);
-        
-         System.out.println("Taxa de erro aceitável:");
-         double taxaErro = s.nextDouble();
-         redeneural.setPorcentagemDeErroAceitavel(taxaErro);
+		double[] valoresEsperados = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, };
 
-         System.out.println("taxa de aprendizado aplicada: " + taxa);
-         System.out.println("taxa de aprendizado Aceitavel aplicada: " + taxaErro);*/
+		redeneural.aprender(conjuntoDeTreinamento, valoresEsperados);
 
-        System.out.println("Inicializando Conexões sinápticas...");
-        redeneural.inicializarConexoesSinapticasDaRede(conjuntoDeTreinamento.get(0).length);
+		String caminhoCirculosClassificacao = new File("./conjunto/classificacao/circ/").getCanonicalPath();
+		String caminhoTriangulosClassificacao = new File("./conjunto/classificacao/trian").getCanonicalPath();
 
-        double[] valoresEsperados = {
-            
-            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        };
+		System.out.println("\n\nCarregando dados para classificação...\n\n");
+		ArrayList<double[]> cassificarCirculos = leitor.LerDeDiretorios(caminhoCirculosClassificacao, true);
 
-        redeneural.treinar(conjuntoDeTreinamento, valoresEsperados);
+		System.out.println("Carregando dados para classificação...");
+		ArrayList<double[]> cassificarTriangulos = leitor.LerDeDiretorios(caminhoTriangulosClassificacao, true);
 
-        System.out.println("\n\nCarregando dados para classificação...\n\n");
-        ArrayList<double[]> cassificarCirculos = leitor.LerDeDiretorios("C:\\Users\\Christian Santos\\Desktop\\conjuntoV3\\txt Final\\classificar cir");
+		System.out.println("*************************************************");
+		System.out.println("Saida Classificação Círculos:");
 
-        System.out.println("Carregando dados para classificação...");
-        ArrayList<double[]> cassificarTriangulos = leitor.LerDeDiretorios("C:\\Users\\Christian Santos\\Desktop\\conjuntoV3\\txt Final\\classicicar trian");
+		for (double[] item : cassificarCirculos) {
+			redeneural.classificar(normalizador.normalizarDados(item));
+		}
+		System.out.println("*************************************************");
+		System.out.println("Saída Classificação Triangulos");
 
-        System.out.println("*************************************************");
-        System.out.println("Saida Classificação Círculos:");
-
-        for (double[] item : cassificarCirculos) {
-            redeneural.classificarDados(normalizador.normalizarDados(item));
-        }
-        System.out.println("*************************************************");
-        System.out.println("Saída Classificação Triangulos");
-
-        for (double[] item : cassificarTriangulos) {
-            redeneural.classificarDados(normalizador.normalizarDados(item));
-        }
-        System.out.println("\n\nCarregando dados viviados...\n\n");
-        ArrayList<double[]> circulosDoTreinamento = leitor.LerDeDiretorios();
-        ArrayList<double[]> triangulosDoTreinamento = leitor.LerDeDiretorios();
-
-        String nextLine = s.nextLine();
-    }
+		for (double[] item : cassificarTriangulos) {
+			redeneural.classificar(normalizador.normalizarDados(item));
+		}
+		System.out.println("\n\nCarregando dados viciados...\n\n");
+	}
 }
